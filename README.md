@@ -12,6 +12,11 @@ A full-stack, AI-powered e-invoicing platform demo built to showcase modern fina
   - **High-Value Flags**: Automated review triggers for invoices exceeding 1000 EUR.
 - **Minimalist Dashboard**: A premium, sleek React frontend inspired by modern AI interfaces (Claude-style), focused on clarity and accounting efficiency.
 
+## 🖼️ Preview
+
+![Cashfeed Dashboard Preview](docs/dashboard-preview.png)
+*A minimalist, high-fidelity interface for managing e-invoicing workflows.*
+
 ## 🛠️ Tech Stack
 
 ### Backend

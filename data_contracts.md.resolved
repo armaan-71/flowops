@@ -1,0 +1,67 @@
+# Backend Multi-Agent Data Contracts
+
+To enable 4 agents to work in parallel, we define the "Handshake" points between them. Each agent should use these exact Pydantic models and function signatures.
+
+## Shared Schemas ([app/schemas.py](file:///Users/armaannahata/repos/flowops/app/schemas.py))
+All agents must import from this file.
+
+```python
+from pydantic import BaseModel
+from datetime import date
+from typing import Optional, List
+
+class ExtractedInvoice(BaseModel):
+    vendor_name: str
+    total_amount: float
+    tax_amount: Optional[float] = None
+    invoice_date: date
+    confidence_score: float  # 0.0 to 1.0
+
+class InvoiceStatus(BaseModel):
+    id: Optional[int] = None
+    status: str  # "ready", "needs review", "duplicate suspected", "rejected"
+    warnings: List[str]
+    extracted_data: ExtractedInvoice
+```
+
+---
+
+## Service Interfaces (The "Contracts")
+
+### Agent 2 (PDF Parser)
+- **Input:** `file_bytes: bytes`
+- **Output:** `raw_text: str`
+- **Responsibility:** Purely functional. Just pull text from the PDF.
+
+### Agent 3 (AI Structurer)
+- **Input:** `raw_text: str`
+- **Output:** `ExtractedInvoice` (Pydantic model)
+- **Parallel Tip:** Can be tested using long strings of text from real invoices before Agent 2 is finished.
+
+### Agent 4 (DB & Rule Engine)
+- **Input:** `data: ExtractedInvoice`
+- **Output:** `InvoiceStatus` (Pydantic model)
+- **Responsibility:** Check the DB for duplicates, apply thresholds (e.g., amount > 1000), and save to SQLite.
+- **Parallel Tip:** Can be tested using manually created `ExtractedInvoice` objects before Agent 3 is finished.
+
+### Agent 1 (API Orchestrator)
+- **Input:** `UploadFile` (FastAPI)
+- **Pipeline Call Order:**
+  1. `text = pdf_service.extract_text(file)`
+  2. `extracted = ai_service.structurize(text)`
+  3. `result = db_service.process_and_save(extracted)`
+- **Responsibility:** Wiring the pieces and handling the HTTP request/response.
+
+---
+
+## Mock Data for Testing
+If you are Agent 4 (Rule Engine) and need to test without Agent 3 (AI), use this:
+```python
+mock_extraction = ExtractedInvoice(
+    vendor_name="Acme Corp",
+    total_amount=1250.00,
+    tax_amount=250.00,
+    invoice_date="2024-03-26",
+    confidence_score=0.95
+)
+```

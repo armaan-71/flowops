@@ -64,14 +64,23 @@ class ExtractionService:
         if lines:
             vendor_name = lines[0]
 
-        # Simple regex for amount - using word boundaries and searching carefully
-        total_matches = re.findall(r"\bTotal:?\s*\$?\s*(\d+[\.,]\d*)", text, re.IGNORECASE)
-        tax_matches = re.findall(r"\bTax:?\s*\$?\s*(\d+[\.,]\d*)", text, re.IGNORECASE)
+        # More robust regex for amount - skips currency symbols/labels like "€" or "Amount"
+        total_matches = re.findall(r"(?:Total|Amount):?\s*[^0-9\n]*([\d.,]+)", text, re.IGNORECASE)
+        tax_matches = re.findall(r"Tax:?\s*[^0-9\n]*([\d.,]+)", text, re.IGNORECASE)
         date_match = re.search(r"(\d{4}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4})", text)
 
-        # Usually the last "Total" in the document is the grand total
-        total_amount = float(total_matches[-1].replace(',', '.')) if total_matches else 0.0
-        tax_amount = float(tax_matches[-1].replace(',', '.')) if tax_matches else 0.0
+        def safe_float(s: str) -> float:
+            try:
+                # Remove separators and handle decimal part
+                parts = re.split(r'[.,]', s)
+                if len(parts) > 1:
+                    return float(".".join(["".join(parts[:-1]), parts[-1]]))
+                return float(s)
+            except:
+                return 0.0
+
+        total_amount = safe_float(total_matches[-1]) if total_matches else 0.0
+        tax_amount = safe_float(tax_matches[-1]) if tax_matches else 0.0
         date = date_match.group(1) if date_match else "unknown"
         
         # Confidence is 1.0 if we found at least one "Total" match AND "Vendor" is not unknown

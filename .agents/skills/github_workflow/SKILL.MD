@@ -1,6 +1,6 @@
 ---
 name: GitHub Workflow Standards
-description: Enforces the proper branching, commit, and PR strategies for the argos repository.
+description: Enforces the proper branching, commit, and PR strategies for the repository.
 ---
 
 # GitHub Workflow Standards

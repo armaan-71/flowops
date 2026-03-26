@@ -8,6 +8,7 @@ interface DataTableProps {
   data: Invoice[];
   isLoading: boolean;
   isError?: boolean;
+  onRowClick?: (invoice: Invoice) => void;
 }
 
 const getStatusBadge = (status: Invoice['status']) => {
@@ -38,7 +39,7 @@ const rowVariants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.3 } }
 };
 
-export const DataTable = ({ data, isLoading, isError }: DataTableProps) => {
+export const DataTable = ({ data, isLoading, isError, onRowClick }: DataTableProps) => {
   if (isLoading) {
     return (
       <div className="table-container empty-state">
@@ -84,7 +85,12 @@ export const DataTable = ({ data, isLoading, isError }: DataTableProps) => {
           animate="show"
         >
           {data.map((invoice) => (
-            <motion.tr key={invoice.id} variants={rowVariants}>
+            <motion.tr 
+              key={invoice.id} 
+              variants={rowVariants}
+              className={onRowClick ? "clickable-row" : ""}
+              onClick={() => onRowClick?.(invoice)}
+            >
               <td style={{ fontWeight: 500 }}>{invoice.vendor_name}</td>
               <td>€{invoice.total_amount.toFixed(2)}</td>
               <td style={{ color: 'var(--text-secondary)' }}>{invoice.date}</td>

@@ -60,6 +60,7 @@ pytestdebug.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+flowops.db
 
 # Flask stuff:
 instance/

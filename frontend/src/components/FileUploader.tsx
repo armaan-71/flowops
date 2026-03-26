@@ -92,17 +92,17 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
               exit={{ opacity: 0 }}
-              className="uploading-state flex flex-col items-center justify-center p-4"
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
             >
-              <div className="scanning-container">
-                <FileText size={48} className="text-secondary opacity-50 mb-2" />
+              <div className="scanning-container" style={{ marginBottom: '1rem' }}>
+                <FileText size={48} style={{ color: 'var(--text-tertiary)' }} />
                 <motion.div 
                   className="scanning-line"
                   animate={{ y: [0, 48, 0] }}
                   transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
                 />
               </div>
-              <p className="mt-4 font-medium text-gradient">AI is extracting data...</p>
+              <p style={{ fontWeight: 500, color: 'var(--text-primary)', margin: 0 }}>AI is extracting data...</p>
             </motion.div>
           ) : (
             <motion.div 
@@ -110,12 +110,12 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
               exit={{ opacity: 0 }}
-              className="idle-state flex flex-col items-center justify-center p-4"
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
             >
-              <UploadCloud size={48} className="mb-4 mx-auto" style={{ color: 'var(--primary)' }} />
-              <h3 className="text-lg font-semibold mb-2">Drag & Drop Invoice</h3>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>or click to browse PDF files</p>
-              {error && <p className="text-sm mt-3 font-medium" style={{ color: 'var(--danger)' }}>{error}</p>}
+              <UploadCloud size={48} style={{ color: 'var(--accent-primary)', marginBottom: '1rem' }} />
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 600, margin: '0 0 0.5rem 0' }}>Drag & Drop Invoice</h3>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', margin: 0 }}>or click to browse PDF files</p>
+              {error && <p style={{ fontSize: '0.875rem', color: 'var(--danger)', marginTop: '0.75rem', fontWeight: 500 }}>{error}</p>}
             </motion.div>
           )}
         </AnimatePresence>
